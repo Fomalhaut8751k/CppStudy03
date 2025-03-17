@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{084eb4c2-476e-4194-a492-8cb506bc4468}</ProjectGuid>
-    <RootNamespace>My00测试</RootNamespace>
+    <ProjectGuid>{ee82da16-2bea-4f08-a8ae-c8163761d542}</ProjectGuid>
+    <RootNamespace>My08大数的加减法</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
