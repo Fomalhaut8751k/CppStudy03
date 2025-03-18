@@ -100,6 +100,27 @@ int main() {
 
 #endif
 
+#if 0  // Õ∞≈≈–Ú≤‚ ‘
+	srand((unsigned int)time(NULL));
+	int arr[20] = {};
+	for (int i = 0; i < 20; i++)
+	{
+		arr[i] = rand() % 100 - 40;
+	}
+	for (int i = 0; i < 20; i++)
+	{
+		cout << arr[i] << " ";
+	}cout << endl;
+
+	BarrelSort_v2(arr, 20);
+
+	for (int i = 0; i < 20; i++)
+	{
+		cout << arr[i] << " ";
+	}cout << endl;
+
+
+#endif
 
 #if 1  // –‘ƒ‹≤‚ ‘
 	const int COUNT = 200000;
@@ -111,12 +132,13 @@ int main() {
 	int* arr_5 = new int[COUNT];
 	int* arr_6 = new int[COUNT];
 	int* arr_7 = new int[COUNT];
+	int* arr_8 = new int[COUNT];
 
 	srand((unsigned)time(NULL));
 
 	for (int i = 0; i < COUNT; i++) {
 		int val = rand() % 100000 + 1;
-		arr_1[i] = arr_2[i] = arr_3[i] = arr_4[i] = arr_5[i] = arr_6[i] = arr_7[i] = val;
+		arr_1[i] = arr_2[i] = arr_3[i] = arr_4[i] = arr_5[i] = arr_6[i] = arr_7[i] = arr_8[i]= val;
 	}
 
 	clock_t begin, end;
@@ -156,6 +178,10 @@ int main() {
 	end = clock();
 	cout << "∂—≈≈–Ú∫ƒ ±: " << (end - begin) * 1.0 / CLOCKS_PER_SEC << "s" << endl;
 
+	begin = clock();
+	BarrelSort(arr_8, COUNT);
+	end = clock();
+	cout << "Õ∞≈≈–Ú∫ƒ ±: " << (end - begin) * 1.0 / CLOCKS_PER_SEC << "s" << endl;
 
 	// œ£∂˚ > ≤Â»Î > —°‘Ò > √∞≈›
 

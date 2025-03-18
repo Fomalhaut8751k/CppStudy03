@@ -1,6 +1,6 @@
 #pragma once
-#pragma once
-#pragma once
+#include<vector>
+#include<string>
 #include<iostream>
 
 #include "MinHeap.hpp"
@@ -321,7 +321,7 @@ void MergeSort(int arr[], int begin, int end, int* arr_temp) {
 }
 
 
-// 堆排序
+// ----堆排序算法--------------------------------------------------------------------
 void HeapSort(int arr[], int size) {
 	/*
 		一个小根堆，一个一个push，然后一个一个pop?
@@ -336,4 +336,131 @@ void HeapSort(int arr[], int size) {
 	// 平均(最好)时间复杂度：O(nlogn)
 	// 空间复杂度：O(1)  [可以直接操作arr，而不用创建一个大根堆或小根堆]
 	// 不稳定
+}
+
+// ----基数(桶)排序---------------------------------------------------------------------
+void BarrelSort(int arr[], int arrLen)
+{
+	// 桶空间
+	vector<vector<int>> vec;
+
+	vec.resize(10);
+	/*
+		for (int i = 0; i <= 9; i++)  // 十个桶
+		{
+			vec.emplace_back(vector<int>());
+		}
+	*/
+	
+	// 最长(大)的数
+	int maxValue = -9999999;
+	for (int i = 0; i < arrLen; i++)
+	{
+		maxValue = maxValue >= arr[i] ? maxValue : arr[i];
+	}
+
+	int bitCount = (int)to_string(maxValue).size();  // 最大位数
+	/*
+	*	int bitCount = 1;  // 最大位数
+		while (1)
+	{
+		maxValue /= 10;
+		bitCount++;
+		if (maxValue < 10)
+			break;
+	}
+	*/
+
+	// 开始排序
+	int mod = 10;
+	int dev = 1;
+	for (int i = 0; i < bitCount; i++, mod *= 10, dev *= 10)  // 遍历每一个位数，O(d)
+	{
+		for (int j = 0; j < arrLen; j++)  // 遍历每一个数字  O(n)
+		{
+			int index = (arr[j] % mod) / dev;  // 从个位开始取数
+			vec[index].emplace_back(arr[j]);  // 放到对应的桶里
+		}
+		// 按顺序把每个值放回去
+		int idxArr = 0;  // 遍历arr
+		for (auto vecIt : vec)  // O(d)
+		{
+			for (int v : vecIt)
+			{
+				arr[idxArr++] = v;
+			}
+		}
+		vec.clear();
+		vec.resize(10);
+		/*
+			int idxVec = 0;  // 遍历桶
+			while (idxArr < arrLen)
+			{
+				auto it = vec[idxVec].begin();
+				while (it!=vec[idxVec].end())
+				{
+					由于vector没有pop_front();
+					arr[idxArr] = *it;
+					it++;
+					idxArr++;	
+				}
+				while (!vec[idxVec].empty())
+				{
+					vec[idxVec].pop_back();
+				}
+				idxVec++;
+			}
+		*/
+		
+	}
+}  // 时间复杂度是O(nd), 空间复杂度O(n)，稳定 
+
+void BarrelSort_v2(int arr[], int arrLen)  // 支持负数
+{
+	// 桶空间
+	vector<vector<int>> vec;
+
+	vec.resize(19);  // 额外存储-1到-9
+
+	// 最大的数和最小的数
+	int maxValue = -9999999;
+	int minValue = 9999999;
+
+	for (int i = 0; i < arrLen; i++)
+	{
+		maxValue = maxValue >= arr[i] ? maxValue : arr[i];
+		minValue = minValue <= arr[i] ? minValue : arr[i];
+	}
+
+	int bitCount = max((int)to_string(minValue).size() - 1,
+		(int)to_string(maxValue).size());  // 最大位数,负数忽略符号位
+
+	// 开始排序
+	int mod = 10;
+	int dev = 1;
+	for (int i = 0; i < bitCount; i++, mod *= 10, dev *= 10)  // 遍历每一个位数
+	{
+		for (int j = 0; j < arrLen; j++)  // 遍历每一个数字
+		{
+			// 从个位开始取数, 如果是负数，index也是负数
+			int index = (arr[j] % mod) / dev;  
+			/*
+				-9 -8 -7 -6 ..... -1 0 1 2 3.......
+				如果是-9，就放在第-9+9=0个
+				如果是1，就放在第1+9=10个
+			*/
+			vec[index + 9].emplace_back(arr[j]);
+		}
+		// 按顺序把每个值放回去
+		int idxArr = 0;  // 遍历arr
+		for (auto vecIt : vec)
+		{
+			for (int v : vecIt)
+			{
+				arr[idxArr++] = v;
+			}
+		}
+		vec.clear();
+		vec.resize(19);
+	}
 }
