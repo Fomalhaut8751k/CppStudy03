@@ -1,32 +1,23 @@
-#include<iostream>
-#include<vector>
-#include<algorithm>
-
+#include <iostream>
+#include <vector>
+#include <sstream>
+#include <string>
 using namespace std;
 
-int main()
-{
-	cout << '4' - '0' << endl;
-	int arr[4] = { 0 };
-	int index = 0;
+int main() {
+    string line;
+    getline(cin, line); // 读取整行输入，如 "1 2 3 4 5"
 
-	vector<int> vec = { 1, 2, 4, 5 };
-	while (!vec.empty())
-	{
-		auto it = vec.end();
-		arr[index] = *(--it);
-		index++;
-		vec.pop_back();
-	}
+    stringstream ss(line);
+    vector<int> vec;
+    int num;
+    while (ss >> num) {
+        vec.push_back(num);
+    }
 
-	for (int i = 0; i < 4; ++i)
-	{
-		cout << arr[i] << " ";
-	}cout << endl;
-	
-	cout << (-123 % 10) / 1 << endl;
-	cout << (-123 % 100) / 10 << endl;
-	cout << (-123 % 1000) / 100 << endl;
-
-	return 0;
+    // 输出验证
+    for (int x : vec) {
+        cout << x << " ";
+    }
+    return 0;
 }
