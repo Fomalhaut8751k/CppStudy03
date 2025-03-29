@@ -1,6 +1,8 @@
 #include<iostream>
 #include<algorithm>
 #include<vector>
+#include<queue>
+#include<cmath>
 
 using namespace std;
 
@@ -11,6 +13,32 @@ public:
 	// 默认构造
 	BinarySearchTree()
 		:_root(nullptr) {}
+
+	// 析构函数
+	~BinarySearchTree()
+	{
+		// 后序遍历LRV，保证V最后一个删除
+		// _deleteNode(_root);
+
+		// 层序遍历
+		queue<Node*> s;
+		s.push(_root);
+		while (!s.empty())
+		{
+			Node* front = s.front();
+			s.pop(); // 把头拿出来，然后放入他的左右子节点
+
+			if (front->_leftChild != nullptr)
+			{
+				s.push(front->_leftChild);
+			}
+			if (front->_rightChild != nullptr)
+			{
+				s.push(front->_rightChild);
+			}
+			delete front;
+		}
+	}
 
 	struct Node;
 
@@ -320,6 +348,33 @@ public:
 		_root = _restoreByPreorderandInOrder(pre, i, j, in, m, n);
 
 	}
+
+	// 判断是否是平衡树
+	bool isBalance()
+	{
+		bool _is_balance = true;
+		_isBalance(_root, _is_balance);
+		return _is_balance;
+	}
+
+	// 前序遍历倒数第k个结点
+	int getPreOrderLastK(int k)
+	{
+		int value = -1;
+		int index = 1;
+		_getPreOrderLastK(_root, k, index, value);
+		return value;
+	}
+
+	// 中序遍历倒数第k个结点
+	int getInOrderLastK(int k)
+	{
+		int value = -1;
+		int index = 1;
+		_getInOrderLastK(_root, k, index, value);
+		return value;
+	}
+
 private:
 	struct Node
 	{
@@ -333,6 +388,18 @@ private:
 		Node* _leftChild;
 		Node* _rightChild;
 	};
+
+	void _deleteNode(Node* it)
+	{
+		if (it != nullptr)
+		{
+			return;
+		}
+		_deleteNode(it->_leftChild);
+		_deleteNode(it->_rightChild);
+		
+		delete it;
+	}
 
 	void _foreachPreorder(Node* it) const
 	{
@@ -664,6 +731,61 @@ private:
 		return node;
 	}
 
+	int _isBalance(Node* it, bool& label)
+	{
+		if (it == nullptr)
+		{
+			return 0;
+		}
+		int _countOfLeftNode = _isBalance(it->_leftChild, label) + 1;
+		int _countOfRightNode = _isBalance(it->_rightChild, label) + 1;
+
+		if (abs(_countOfLeftNode - _countOfRightNode) >= 2)
+		{
+			label = false;
+		}
+		return max(_countOfLeftNode, _countOfRightNode);
+	}
+
+	void _getPreOrderLastK(Node* it, int k, int& idx, int& value)
+	{
+		if (it == nullptr)
+		{
+			return;
+		}
+
+		_getPreOrderLastK(it->_rightChild, k, idx, value);
+		if (k == idx)
+		{
+			value = it->_nodeVal;
+		}
+
+		_getPreOrderLastK(it->_leftChild, k, idx, value);
+		if(k == idx)
+		{
+			value = it->_nodeVal;
+		}
+
+		idx++;
+	}
+
+	void _getInOrderLastK(Node* it, int k, int& idx, int& value)
+	{
+		if (it == nullptr)
+			return;
+
+		_getInOrderLastK(it->_rightChild, k, idx, value);
+		if (k == idx)
+			value = it->_nodeVal;
+		
+		idx++;
+
+		_getInOrderLastK(it->_leftChild, k, idx, value);
+		if (k == idx)
+			value = it->_nodeVal;
+	}
+
+
 	Node* _root;
 	Compare comp;
 
@@ -762,6 +884,7 @@ void test03()
 /*
 	并不需要创建成全局变量，一样可以定义成类函数，然后初始化后调用
 */
+
 BinarySearchTree<int>::Node* _restoreByPreorderandInOrder(
 	BinarySearchTree<int>::Node* it,
 	int _preOrder[], int _inOrder[], int& idxPre, int L, int R)
@@ -943,5 +1066,39 @@ int main()
 	bst3.foreachPreorder();
 	bst3.foreachInorder();
 
+// ###### 11. 判断是否是平衡树
+	/*                        58
+				 24                       64
+			0         34            62          69
+			   5		  41	                    78
+	*/
+	// 目前还是平衡树
+	cout << "\nbst是否是平衡树: " << bst1.isBalance() << endl;
+	// 如下插入后不平衡了
+	/*                        58
+				 24                       64
+			0         34            62          69
+			   5		  41	                    78
+			    12
+	*/
+	bst1.insert(12);
+	cout << "bst是否是平衡树: " << bst1.isBalance() << endl;
+
+// ###### 12. 前序遍历倒数第k个结点 ###################################################
+	cout << endl;
+	bst2.mirrorInverse();
+	bst2.foreachPreorder();
+	for (int i = 1; i <= bst2.number(); ++i)
+	{
+		cout << "前序遍历的倒数第k="<< i <<"个值为: " << bst2.getPreOrderLastK(i) << endl;
+	}
+	// 只需要微小的改动就能变成中序遍历的
+
+	cout << endl;
+	bst2.foreachInorder();
+	for (int i = 1; i <= bst2.number(); ++i)
+	{
+		cout << "中序遍历的倒数第k=" << i << "个值为: " << bst2.getInOrderLastK(i) << endl;
+	}
 	return 0;
 }
